@@ -1,91 +1,167 @@
--- Gui to Lua
--- Version: 3.2
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Rain-Design/Libraries/main/Shaman/Library.lua'))()
+local Flags = Library.Flags
 
--- Instances:
+local Window = Library:Window({
+    Text = "prohack"
+})
 
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local UICorner = Instance.new("UICorner")
-local UIGradient = Instance.new("UIGradient")
-local TextLabel = Instance.new("TextLabel")
-local UICorner_2 = Instance.new("UICorner")
-local TextButton = Instance.new("TextButton")
-local UICorner_3 = Instance.new("UICorner")
-local TextLabel_2 = Instance.new("TextLabel")
+--// Aiming Tab
+local Tab = Window:Tab({
+    Text = "Aiming"
+})
 
---Properties:
+--// Visual Tab
+local Tab2 = Window:Tab({
+    Text = "Visual"
+})
 
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+--// Player Tab
+local Tab3 = Window:Tab({
+    Text = "Player"
+})
 
-Frame.Parent = ScreenGui
-Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Frame.BackgroundTransparency = 0.550
-Frame.Position = UDim2.new(0.0329972506, 0, 0.396508723, 0)
-Frame.Size = UDim2.new(0, 200, 0, 200)
+--// Aiming Sections
+local Section = Tab:Section({
+    Text = "Aimbot"
+})
 
-UICorner.CornerRadius = UDim.new(0, 20)
-UICorner.Parent = Frame
+local Section2 = Tab:Section({
+    Text = "FOV"
+})
 
-UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(0.41, Color3.fromRGB(33, 33, 33)), ColorSequenceKeypoint.new(0.61, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(0, 0, 0))}
-UIGradient.Rotation = 270
-UIGradient.Parent = Frame
+local Section3 = Tab:Section({
+    Text = "Misc",
+    Side = "Right"
+})
 
-TextLabel.Parent = Frame
-TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel.Size = UDim2.new(0, 200, 0, 50)
-TextLabel.Font = Enum.Font.FredokaOne
-TextLabel.Text = "Auto Farm CDID"
-TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
-TextLabel.TextScaled = true
-TextLabel.TextSize = 14.000
-TextLabel.TextWrapped = true
+--// Visual Section
+local ChamsSection = Tab2:Section({
+    Text = "Chams"
+})
 
-UICorner_2.CornerRadius = UDim.new(0, 20)
-UICorner_2.Parent = TextLabel
+ChamsSection:Toggle({ Text = "Enabled" })
+ChamsSection:Toggle({ Text = "Color" })
+ChamsSection:Toggle({ Text = "Filled" })
+ChamsSection:Toggle({ Text = "Team Check" })
 
-TextButton.Parent = Frame
-TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextButton.Position = UDim2.new(0, 0, 0.435000002, 0)
-TextButton.Size = UDim2.new(0, 200, 0, 50)
-TextButton.Font = Enum.Font.FredokaOne
-TextButton.Text = "Start"
-TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-TextButton.TextScaled = true
-TextButton.TextSize = 14.000
-TextButton.TextWrapped = true
-TextButton.MouseButton1Click:Connect(function()
-	local args = {
-		[1] = "JanjiJiwa"
-	}
+--✅ Tambahan: Label nama & status premium
+ChamsSection:Label({
+	Text = game.Players.LocalPlayer.DisplayName .. " | " .. (game.Players.LocalPlayer.MembershipType == Enum.MembershipType.Premium and "Premium" or "Free"),
+	Color = Color3.fromRGB(255, 255, 255),
+	Tooltip = "Your display name and membership"
+})
 
-	game:GetService("ReplicatedStorage"):WaitForChild("NetworkContainer"):WaitForChild("RemoteEvents"):WaitForChild("Job"):FireServer(unpack(args))
-	
-	while wait() do
-		local args = {
-			[1] = "GetCoffee"
-		}
+--✅ Tambahan: Gambar avatar (headshot)
+local ImageLabel = Instance.new("ImageLabel")
+ImageLabel.Size = UDim2.new(0, 48, 0, 48)
+ImageLabel.Position = UDim2.new(0, 10, 0, 125)
+ImageLabel.BackgroundTransparency = 1
+ImageLabel.Image = string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%s&width=420&height=420&format=png", game.Players.LocalPlayer.UserId)
 
-		game:GetService("ReplicatedStorage"):WaitForChild("NetworkContainer"):WaitForChild("RemoteEvents"):WaitForChild("JanjiJiwa"):FireServer(unpack(args))
-		wait(16)
-		local args = {
-			[1] = "Delivery"
-		}
-
-		game:GetService("ReplicatedStorage"):WaitForChild("NetworkContainer"):WaitForChild("RemoteEvents"):WaitForChild("JanjiJiwa"):FireServer(unpack(args))
-
+-- Cari panel Visual > Chams
+local gui = Library.Gui
+local visualTab = gui and gui:FindFirstChild("Visual")
+if visualTab then
+	local chams = visualTab:FindFirstChild("Chams")
+	if chams then
+		ImageLabel.Parent = chams
 	end
-end)
+end
 
-UICorner_3.CornerRadius = UDim.new(0, 20)
-UICorner_3.Parent = TextButton
+--// Player Tab Section
+local PlayerSection = Tab3:Section({ Text = "Player Controls" })
 
-TextLabel_2.Parent = Frame
-TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel_2.BackgroundTransparency = 1.000
-TextLabel_2.Position = UDim2.new(0, 0, 0.685000002, 0)
-TextLabel_2.Size = UDim2.new(0, 200, 0, 50)
-TextLabel_2.Font = Enum.Font.FredokaOne
-TextLabel_2.Text = " "
-TextLabel_2.TextColor3 = Color3.fromRGB(0, 0, 0)
-TextLabel_2.TextSize = 14.000
+PlayerSection:Slider({
+    Text = "Walkspeed",
+    Default = 16,
+    Minimum = 16,
+    Maximum = 100,
+    Flag = "WalkspeedFlag",
+    Callback = function(Value)
+        local char = game.Players.LocalPlayer.Character
+        if char and char:FindFirstChild("Humanoid") then
+            char.Humanoid.WalkSpeed = Value
+        end
+    end
+})
+
+PlayerSection:Slider({
+    Text = "JumpPower",
+    Default = 50,
+    Minimum = 50,
+    Maximum = 200,
+    Flag = "JumpPowerFlag",
+    Callback = function(Value)
+        local char = game.Players.LocalPlayer.Character
+        if char and char:FindFirstChild("Humanoid") then
+            char.Humanoid.JumpPower = Value
+        end
+    end
+})
+
+--// Aimbot Section
+Section:Toggle({ Text = "Enabled" })
+Section:Toggle({ Text = "Wall Check" })
+Section:Toggle({ Text = "Smooth Aimbot" })
+Section:Toggle({ Text = "Silent Aimbot" })
+
+Section:Dropdown({
+    Text = "Dropdown",
+    List = {"Head", "Torso", "Random"},
+    Flag = "Choosen",
+    Callback = function(v) warn(v) end
+})
+
+Section:RadioButton({
+    Text = "RadioButton",
+    Options = {"Legit", "Blatant"},
+    Callback = function(v) warn(v) end
+})
+
+Section:Input({
+    Placeholder = "Webhook URL",
+    Flag = "URL"
+})
+
+Section:Keybind({
+    Default = Enum.KeyCode.E,
+    Text = "Aimbot Key",
+    Callback = function() warn("Pressed") end
+})
+
+Section:Slider({
+    Text = "Slider Test",
+    Default = 5,
+    Minimum = 0,
+    Maximum = 50,
+    Flag = "SliderFlag",
+    Callback = function(v) warn(v) end
+})
+
+--// FOV Section
+Section2:Toggle({ Text = "Enabled" })
+Section2:Toggle({ Text = "Filled FOV" })
+Section2:Toggle({ Text = "FOV Transparency", Tooltip = "Changes your fov transparency." })
+Section2:Button({ Text = "Reset FOV", Tooltip = "This resets your aimbot fov." })
+
+--// Misc Section
+Section3:Toggle({ Text = "Infinite Ammo" })
+Section3:Toggle({ Text = "No Spread" })
+Section3:Toggle({ Text = "No Bullet Drop", Default = true })
+Section3:Toggle({ Text = "Full Auto" })
+
+local a = Section3:Toggle({ Text = "No Recoil" })
+
+local label = Section3:Label({
+    Text = "This is a label.",
+    Color = Color3.fromRGB(217, 97, 99),
+    Tooltip = "This is a label."
+})
+
+-- Final setup
+Tab:Select()
+
+wait(5)
+
+label:Set({ Text = "This is a red label." })
+a:Set(true)

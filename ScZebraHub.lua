@@ -5,14 +5,9 @@ local Window = Library:Window({
     Text = "ZebraDEV"
 })
 
---// Aiming Tab
-local Tab = Window:Tab({
-    Text = "General"
-})
-
 --// Farm Tab
-local Tab2 = Window:Tab({
-    Text = "Farming"
+local Tab = Window:Tab({
+    Text = "Farm"
 })
 
 --// Other
@@ -25,58 +20,152 @@ local Tab4 = Window:Tab({
     Text = "Discord"
 })
 
---// Aiming Sections
-local Section = Tab:Section({
-    Text = "Aimbot"
+local BaristaSection = Tab:Section({
+    Text = "Barista"
 })
 
-local Section2 = Tab:Section({
-    Text = "FOV"
+BaristaSection:Toggle({ 
+    Text = "Auto Farm",
+    Callback = function(state)
+        autoFarmBarista = state
+
+        if state then
+            -- Ambil job Barista
+            game:GetService("ReplicatedStorage")
+                :WaitForChild("NetworkContainer")
+                :WaitForChild("RemoteEvents")
+                :WaitForChild("Job")
+                :FireServer("JanjiJiwa")
+
+            -- Jalankan loop auto farm
+            task.spawn(function()
+                while autoFarmBarista do
+                    -- Ambil kopi
+                    game:GetService("ReplicatedStorage")
+                        :WaitForChild("NetworkContainer")
+                        :WaitForChild("RemoteEvents")
+                        :WaitForChild("JanjiJiwa")
+                        :FireServer("GetCoffee")
+
+                    task.wait(16)
+
+                    -- Antar kopi
+                    game:GetService("ReplicatedStorage")
+                        :WaitForChild("NetworkContainer")
+                        :WaitForChild("RemoteEvents")
+                        :WaitForChild("JanjiJiwa")
+                        :FireServer("Delivery")
+
+                    -- Teleport ke lokasi kerja
+                    local char = game.Players.LocalPlayer.Character
+                    if char and char:FindFirstChild("HumanoidRootPart") then
+                        char.HumanoidRootPart.CFrame = CFrame.new(-13720.0, 1052.9, -17996.2)
+                    end
+                end
+            end)
+        else
+            -- Stop farming + keluar kerja
+            game:GetService("ReplicatedStorage")
+                :WaitForChild("NetworkContainer")
+                :WaitForChild("RemoteEvents")
+                :WaitForChild("Job")
+                :FireServer("Unemployee")
+        end
+    end
 })
 
-local Section3 = Tab:Section({
-    Text = "Misc",
+BaristaSection:Toggle({
+    Text = "Teleport",
+    Callback = function(state)
+        if state then
+            local char = game.Players.LocalPlayer.Character
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                char.HumanoidRootPart.CFrame = CFrame.new(-13720.0, 1052.9, -17996.2)
+            end
+
+            task.delay(2, function()
+                TeleportBaristaToggle:Set(false)
+            end)
+        end
+    end
+})
+
+BaristaSection:Toggle({ 
+    Text = "Ambil Job",
+    Callback = function(state)
+        local args = {}
+        if state then
+            args = { "JanjiJiwa" }
+        else
+            args = { "Unemployee" }
+        end
+
+        game:GetService("ReplicatedStorage")
+            :WaitForChild("NetworkContainer")
+            :WaitForChild("RemoteEvents")
+            :WaitForChild("Job")
+            :FireServer(unpack(args))
+    end
+})
+
+local label = BaristaSection:Label({
+    Text = "Jawa Tengah Only",
+    Color = Color3.fromRGB(217, 97, 99),
+    Tooltip = "Jawa Tengah Only"
+})
+
+local OfficeSection = Tab:Section({
+    Text = "Office Worker",
     Side = "Right"
 })
 
---// Visual Section
-local ChamsSection = Tab2:Section({
-    Text = "Chams"
+OfficeSection:Toggle({ Text = "Auto Farm" })
+
+OfficeSection:Toggle({
+    Text = "Teleport",
+    Callback = function(state)
+        if state then
+            local char = game.Players.LocalPlayer.Character
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                char.HumanoidRootPart.CFrame = CFrame.new(-13720.0, 1052.9, -17996.2)
+            end
+
+            task.delay(2, function()
+                TeleportBaristaToggle:Set(false)
+            end)
+        end
+    end
 })
 
-ChamsSection:Toggle({ Text = "Enabled" })
-ChamsSection:Toggle({ Text = "Color" })
-ChamsSection:Toggle({ Text = "Filled" })
-ChamsSection:Toggle({ Text = "Team Check" })
+OfficeSection:Toggle({    
+    Text = "Job",
+    Callback = function(state)
+        local args = {}
+        if state then
+            args = { "Office" }
+        else
+            args = { "Unemployee" }
+        end
 
---✅ Tambahan: Label nama & status premium
-ChamsSection:Label({
-	Text = game.Players.LocalPlayer.DisplayName .. " | " .. (game.Players.LocalPlayer.MembershipType == Enum.MembershipType.Premium and "Premium" or "Free"),
-	Color = Color3.fromRGB(255, 255, 255),
-	Tooltip = "Your display name and membership"
+        game:GetService("ReplicatedStorage")
+            :WaitForChild("NetworkContainer")
+            :WaitForChild("RemoteEvents")
+            :WaitForChild("Job")
+            :FireServer(unpack(args))
+    end
 })
 
---✅ Tambahan: Gambar avatar (headshot)
-local ImageLabel = Instance.new("ImageLabel")
-ImageLabel.Size = UDim2.new(0, 48, 0, 48)
-ImageLabel.Position = UDim2.new(0, 10, 0, 125)
-ImageLabel.BackgroundTransparency = 1
-ImageLabel.Image = string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%s&width=420&height=420&format=png", game.Players.LocalPlayer.UserId)
 
--- Cari panel Visual > Chams
-local gui = Library.Gui
-local visualTab = gui and gui:FindFirstChild("Visual")
-if visualTab then
-	local chams = visualTab:FindFirstChild("Chams")
-	if chams then
-		ImageLabel.Parent = chams
-	end
-end
+local label = OfficeSection:Label({
+    Text = "Jakarta Only",
+    Color = Color3.fromRGB(217, 97, 99),
+    Tooltip = "Jakarta Only"
+})
 
---// Player Tab Section
-local PlayerSection = Tab3:Section({ Text = "Player Controls" })
+--// Other Tab
+local Misc = Tab3:Section({ Text = "Misc" })
 
-PlayerSection:Slider({
+Misc:Slider({
     Text = "Walkspeed",
     Default = 16,
     Minimum = 16,
@@ -90,7 +179,7 @@ PlayerSection:Slider({
     end
 })
 
-PlayerSection:Slider({
+Misc:Slider({
     Text = "JumpPower",
     Default = 50,
     Minimum = 50,
@@ -104,36 +193,31 @@ PlayerSection:Slider({
     end
 })
 
---// Aimbot Section
-Section:Toggle({ Text = "Enabled" })
-Section:Toggle({ Text = "Wall Check" })
-Section:Toggle({ Text = "Smooth Aimbot" })
-Section:Toggle({ Text = "Silent Aimbot" })
-
---// FOV Section
-Section2:Toggle({ Text = "Enabled" })
-Section2:Toggle({ Text = "Filled FOV" })
-Section2:Toggle({ Text = "FOV Transparency", Tooltip = "Changes your fov transparency." })
-Section2:Button({ Text = "Reset FOV", Tooltip = "This resets your aimbot fov." })
-
---// Misc Section
-Section3:Toggle({ Text = "Infinite Ammo" })
-Section3:Toggle({ Text = "No Spread" })
-Section3:Toggle({ Text = "No Bullet Drop", Default = true })
-Section3:Toggle({ Text = "Full Auto" })
-
-local a = Section3:Toggle({ Text = "No Recoil" })
-
-local label = Section3:Label({
-    Text = "This is a label.",
-    Color = Color3.fromRGB(217, 97, 99),
-    Tooltip = "This is a label."
+local Discord1 = Tab4:Section({
+    Text = "Link"
 })
 
--- Final setup
-Tab:Select()
+Discord1:Button({
+    Text = "https://discord.gg/jUeczsRh69",
+    Callback = function()
+        local link = "https://discord.gg/jUeczsRh69"
 
-wait(5)
+        -- Copy ke clipboard
+        if setclipboard then
+            setclipboard(link)
+        end
 
-label:Set({ Text = "This is a red label." })
-a:Set(true)
+        -- Buka link di browser / Discord app (kalau executor support)
+        if syn and syn.request then
+            syn.request({ Url = link, Method = "GET" })
+        elseif request then
+            request({ Url = link, Method = "GET" })
+        end
+
+        -- Notifikasi sukses
+        Library:Notification({
+            Text = "✅ Discord link copied to clipboard!",
+            Duration = 3
+        })
+    end
+})

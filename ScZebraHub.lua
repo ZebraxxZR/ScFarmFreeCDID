@@ -1,3 +1,21 @@
+-- warn("Script By ZebraDEV Is Running")
+-- warn("Connecting To Server...")
+-- wait(1.3)
+-- warn("Succesfully Connected To Server !")
+
+-- for i = 10, 100, 10 do
+--     print("ZebraDEV | Loading Assets... [✅" .. i .. "%]")
+--     wait(0.3)
+-- end
+
+-- for i = 10, 100, 10 do
+--     print("ZebraDEV | Bypassing Security... [✅" .. i .. "%]")
+--     wait(0.5)
+-- end
+
+-- print("All Assets Successfully Loaded and Bypassing game security is success")
+
+
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Rain-Design/Libraries/main/Shaman/Library.lua'))()
 local Flags = Library.Flags
 
@@ -142,7 +160,68 @@ local OfficeSection = Tab:Section({
     Side = "Right"
 })
 
-OfficeSection:Toggle({ Text = "Auto Farm" })
+OfficeSection:Toggle({ 
+    Text = "Auto Farm",
+    Callback = function(state)
+        autoFarmOffice = state
+
+        if state then
+            local jobRemote = game:GetService("ReplicatedStorage")
+                :WaitForChild("NetworkContainer")
+                :WaitForChild("RemoteEvents")
+                :WaitForChild("Job")
+
+            -- Ambil Job Office dulu
+            jobRemote:FireServer("Office")
+
+            task.spawn(function()
+                while autoFarmOffice do
+                    -- Pastikan UI job ada
+                    local jobUI = game.Players.LocalPlayer.PlayerGui:FindFirstChild("Job")
+                    if not jobUI then
+                        -- kalau UI nggak ada, ambil job lagi
+                        jobRemote:FireServer("Office")
+                        task.wait(1)
+                        jobUI = game.Players.LocalPlayer.PlayerGui:WaitForChild("Job", 5)
+                    end
+
+                    -- Mulai pekerjaan "Office table"
+                    jobRemote:FireServer("Office table")
+
+                    if jobUI then
+                        local officeFrame = jobUI:FindFirstChild("Container") and jobUI.Container:FindFirstChild("Office")
+                        if officeFrame and officeFrame:FindFirstChild("Frame") then
+                            local frame = officeFrame.Frame
+                            while autoFarmOffice and frame:FindFirstChild("Question") do
+                                local qText = frame.Question.Text
+                                local num1, op, num2 = string.match(qText, "(%d+)%s*([%+%-])%s*(%d+)")
+                                num1, num2 = tonumber(num1), tonumber(num2)
+
+                                if num1 and num2 and op then
+                                    local answer = (op == "+") and (num1 + num2) or (num1 - num2)
+                                    frame.TextBox.Text = tostring(answer)
+                                    firesignal(frame.SubmitButton.MouseButton1Click)
+                                end
+
+                                task.wait(0.5)
+                            end
+                        end
+                    end
+
+                    task.wait(1) -- jeda sebelum ulang
+                end
+            end)
+        else
+            -- Stop farm + keluar job
+            game:GetService("ReplicatedStorage")
+                :WaitForChild("NetworkContainer")
+                :WaitForChild("RemoteEvents")
+                :WaitForChild("Job")
+                :FireServer("Unemployee")
+        end
+    end
+})
+
 
 OfficeSection:Toggle({
     Text = "Teleport",
@@ -150,7 +229,7 @@ OfficeSection:Toggle({
         if state then
             local char = game.Players.LocalPlayer.Character
             if char and char:FindFirstChild("HumanoidRootPart") then
-                char.HumanoidRootPart.CFrame = CFrame.new(-13720.0, 1052.9, -17996.2)
+                char.HumanoidRootPart.CFrame = CFrame.new(-1034.2, 263.5, 2250.5)
             end
 
             task.delay(2, function()
@@ -183,6 +262,16 @@ local label = OfficeSection:Label({
     Text = "Jakarta Only",
     Color = Color3.fromRGB(217, 97, 99),
     Tooltip = "Jakarta Only"
+})
+
+
+--// Money
+local MoneySelection = Tab:Section({
+    Text = "Money"
+})
+
+MoneySelection:Label({
+    Text = "Current Money : "
 })
 
 --// Other Tab

@@ -2,22 +2,27 @@ local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Rain-
 local Flags = Library.Flags
 
 local Window = Library:Window({
-    Text = "prohack"
+    Text = "ZebraDEV"
 })
 
 --// Aiming Tab
 local Tab = Window:Tab({
-    Text = "Aiming"
+    Text = "General"
 })
 
---// Visual Tab
+--// Farm Tab
 local Tab2 = Window:Tab({
-    Text = "Visual"
+    Text = "Farming"
 })
 
---// Player Tab
+--// Other
 local Tab3 = Window:Tab({
-    Text = "Player"
+    Text = "Other"
+})
+
+--// Discord ZebraDEV Tab
+local Tab4 = Window:Tab({
+    Text = "Discord"
 })
 
 --// Aiming Sections
@@ -104,39 +109,6 @@ Section:Toggle({ Text = "Enabled" })
 Section:Toggle({ Text = "Wall Check" })
 Section:Toggle({ Text = "Smooth Aimbot" })
 Section:Toggle({ Text = "Silent Aimbot" })
-
-Section:Dropdown({
-    Text = "Dropdown",
-    List = {"Head", "Torso", "Random"},
-    Flag = "Choosen",
-    Callback = function(v) warn(v) end
-})
-
-Section:RadioButton({
-    Text = "RadioButton",
-    Options = {"Legit", "Blatant"},
-    Callback = function(v) warn(v) end
-})
-
-Section:Input({
-    Placeholder = "Webhook URL",
-    Flag = "URL"
-})
-
-Section:Keybind({
-    Default = Enum.KeyCode.E,
-    Text = "Aimbot Key",
-    Callback = function() warn("Pressed") end
-})
-
-Section:Slider({
-    Text = "Slider Test",
-    Default = 5,
-    Minimum = 0,
-    Maximum = 50,
-    Flag = "SliderFlag",
-    Callback = function(v) warn(v) end
-})
 
 --// FOV Section
 Section2:Toggle({ Text = "Enabled" })

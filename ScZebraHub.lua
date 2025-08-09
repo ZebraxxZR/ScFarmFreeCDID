@@ -74,6 +74,29 @@ BaristaSection:Toggle({
     end
 })
 
+-- Path folder NPC
+local npcFolder = workspace:WaitForChild("NPC")
+
+-- Bersihkan NPC yang sudah ada dulu
+for _, v in ipairs(npcFolder:GetChildren()) do
+    task.delay(8, function()
+        if v and v.Parent == npcFolder then
+            v:Destroy()
+        end
+    end)
+end
+
+-- Kalau ada NPC baru muncul
+npcFolder.ChildAdded:Connect(function(child)
+    if child:IsA("Model") or child:IsA("Folder") then
+        task.delay(8, function()
+            if child and child.Parent == npcFolder then
+                child:Destroy()
+            end
+        end)
+    end
+end)
+
 BaristaSection:Toggle({
     Text = "Teleport",
     Callback = function(state)
